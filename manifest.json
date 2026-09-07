@@ -1,0 +1,17 @@
+{
+  "name": "LQA F&B Tracker · Los Monteros Marbella",
+  "short_name": "LQA Tracker",
+  "description": "Seguimiento interno de la auditoría LQA de Food & Beverage — Hotel Kimpton Los Monteros Marbella",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#1C1B19",
+  "theme_color": "#1C1B19",
+  "lang": "es",
+  "icons": [
+    { "src": "assets/img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "assets/img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "assets/img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "maskable" }
+  ]
+}
