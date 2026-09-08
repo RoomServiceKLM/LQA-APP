@@ -3,8 +3,8 @@
   "short_name": "LQA Tracker",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#F0A500",
-  "theme_color": "#F0A500",
+  "background_color": "#F8AC00",
+  "theme_color": "#F8AC00",
   "orientation": "portrait-primary",
   "icons": [
     {

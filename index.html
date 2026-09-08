@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#ffffff">
+<meta name="theme-color" content="#F8AC00">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <title>LQA Tracker — Kimpton Los Monteros</title>
@@ -12,9 +12,9 @@
 <link rel="apple-touch-icon" href="logo192.png">
 <style>
 :root {
-  --pantone: #F0A500; --pantone-light: #FFC94D; --pantone-dark: #C47A00; --pantone-glow: rgba(240,165,0,0.25);
-  --bg: #faf9f7; --bg-grad-start: #fffdf5; --bg-grad-mid: #f8f3e6;
-  --glass-bg: rgba(255,255,255,0.72); --glass-border: rgba(196,122,0,0.18);
+  --pantone: #F8AC00; --pantone-light: #FFD166; --pantone-dark: #C47A00; --pantone-glow: rgba(248,172,0,0.35);
+  --bg: #F8AC00; --bg-grad-start: #FFC94D; --bg-grad-mid: #E89B00;
+  --glass-bg: rgba(255,255,255,0.85); --glass-border: rgba(196,122,0,0.18);
   --glass-border-hover: rgba(240,165,0,0.5); --glass-highlight: rgba(255,255,255,0.9);
   --text: #2b2b2b; --text-muted: #7a7368; --text-dim: #b5aea2;
   --ok: #16a34a; --no: #dc2626; --na: #71717a;
@@ -28,9 +28,9 @@ body {
   background-attachment: fixed; color: var(--text); -webkit-font-smoothing: antialiased;
 }
 .orb { position: fixed; border-radius: 50%; filter: blur(120px); pointer-events: none; z-index: 0; }
-.orb-1 { width: 400px; height: 400px; background: rgba(240,165,0,0.14); top: -100px; left: -100px; }
-.orb-2 { width: 300px; height: 300px; background: rgba(240,165,0,0.10); bottom: 10%; right: -50px; }
-.orb-3 { width: 250px; height: 250px; background: rgba(240,165,0,0.08); top: 40%; left: 30%; }
+.orb-1 { width: 400px; height: 400px; background: rgba(196,122,0,0.25); top: -100px; left: -100px; }
+.orb-2 { width: 300px; height: 300px; background: rgba(255,255,255,0.18); bottom: 10%; right: -50px; }
+.orb-3 { width: 250px; height: 250px; background: rgba(196,122,0,0.18); top: 40%; left: 30%; }
 .glass {
   background: var(--glass-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border); border-radius: var(--radius);
@@ -58,7 +58,7 @@ body {
 .user-card .avatar { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, var(--pantone-dark), var(--pantone)); display: flex; align-items: center; justify-content: center; font-size: 22px; margin: 0 auto 10px; box-shadow: 0 4px 15px rgba(240,165,0,0.3); }
 .user-card .name { font-weight: 700; font-size: 14px; color: var(--text); }
 .user-card .pos { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
-.app-header { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,0.8); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px; max-width: 100vw; }
+.app-header { position: sticky; top: 0; z-index: 100; background: rgba(255,248,230,0.92); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border-bottom: 1px solid rgba(196,122,0,0.25); padding: 12px 14px; display: flex; align-items: center; justify-content: space-between; gap: 8px; max-width: 100vw; }
 .app-header .brand { min-width: 0; display: flex; align-items: center; gap: 10px; flex-shrink: 1; }
 .app-header .brand-text { white-space: nowrap; overflow: hidden; }
 .app-header .user-info { margin-left: auto; display: flex; align-items: center; gap: 8px; min-width: 0; flex-shrink: 1; }
