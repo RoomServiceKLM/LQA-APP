@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lqa-glass-v2';
+const CACHE_NAME = 'lqa-glass-v4';
 const urlsToCache = ['./','./index.html','./app.js','./manifest.json','./logo.svg','./logo192.png','./logo512.png'];
 
 self.addEventListener('install', e => {
