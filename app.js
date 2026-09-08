@@ -1,3 +1,4 @@
+
 // ============================================================
 // LQA TRACKER — Kimpton Los Monteros · Versión 2
 // Fondo claro · 100% Español · Sincronización con Google Sheets
@@ -72,9 +73,26 @@ function saveSheetUrl(){
   }
 }
 
+let syncRetryTimer = null;
+
+function setSyncStatus(st){
+  const dot = document.getElementById('syncDot');
+  if(!dot) return;
+  dot.className = 'sync-dot ' + st;
+  dot.title = st==='ok' ? '✅ Sincronizado con Google Sheets'
+            : st==='err' ? '❌ Error de sincronización — se reintentará solo en 20 segundos'
+            : '⚪ Solo guardado local (sin conexión con Google Sheets)';
+}
+
+function scheduleSyncRetry(){
+  clearTimeout(syncRetryTimer);
+  syncRetryTimer = setTimeout(function(){ loadFromSheet(true); }, 20000);
+}
+
 // Carga con JSONP (para evitar problemas de CORS al LEER)
 function loadFromSheet(silent){
-  if(!sheetUrl){ if(!silent) showToast('Introduce primero la URL de Apps Script', 'err'); return; }
+  if(!sheetUrl){ setSyncStatus('local'); if(!silent) showToast('No hay URL de Apps Script configurada', 'err'); return; }
+  if(window.__lqaLoadCb) return; // ya hay una carga en curso
   window.__lqaLoadCb = function(data){
     delete window.__lqaLoadCb;
     flushPendingSave();
@@ -88,6 +106,8 @@ function loadFromSheet(silent){
         else showGlobalDashboard();
       }
       renderLogin();
+      setSyncStatus('ok');
+      clearTimeout(syncRetryTimer);
       document.getElementById('syncStatus').textContent = '✅ Sincronizado correctamente';
       if(!silent) showToast('✅ Datos sincronizados con Google Sheets', 'ok');
     } else {
@@ -98,8 +118,10 @@ function loadFromSheet(silent){
   s.src = sheetUrl + (sheetUrl.indexOf('?') > -1 ? '&' : '?') + 'action=load&callback=__lqaLoadCb';
   s.onerror = function(){
     delete window.__lqaLoadCb;
-    document.getElementById('syncStatus').textContent = '❌ Error: revisa la URL (debe terminar en /exec)';
-    if(!silent) showToast('Error al conectar con Google Sheets', 'err');
+    setSyncStatus('err');
+    scheduleSyncRetry();
+    document.getElementById('syncStatus').textContent = '❌ Error al conectar. Revisa el despliegue (ver instrucciones).';
+    if(!silent) showToast('❌ Error al conectar con Google Sheets. Se reintentará solo.', 'err');
   };
   document.body.appendChild(s);
   setTimeout(function(){ if(window.__lqaLoadCb){ delete window.__lqaLoadCb; } }, 15000);
@@ -137,6 +159,7 @@ function init(){
   loadState();
   renderLogin();
   // Sincronización automática: al cargar, al volver a la pestaña y cada 45 segundos
+  setSyncStatus(sheetUrl ? 'err' : 'local');
   loadFromSheet(true);
   window.addEventListener('focus', function(){ loadFromSheet(true); });
   setInterval(function(){ if(state.user || getUsers().length) loadFromSheet(true); }, 45000);
