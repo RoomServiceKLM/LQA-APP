@@ -1,4 +1,4 @@
-const CACHE_NAME = 'lqa-tracker-v2';
+const CACHE_NAME = 'lqa-fb-v1';
 const urlsToCache = ['./','./index.html','./app.js','./manifest.json'];
 
 self.addEventListener('install', e => {

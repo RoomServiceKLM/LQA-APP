@@ -6,27 +6,16 @@
 <meta name="theme-color" content="#0a0a0a">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<title>LQA Tracker - Kimpton Los Monteros</title>
+<title>LQA Tracker F&B — Kimpton Los Monteros</title>
 <link rel="manifest" href="manifest.json">
-<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%23C9A962' width='192' height='192' rx='24'/%3E%3Ctext x='96' y='125' font-size='90' text-anchor='middle' fill='%230a0a0a'%3E⭐%3C/text%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect fill='%23C9A962' width='192' height='192' rx='24'/%3E%3Ctext x='96' y='125' font-size='90' text-anchor='middle' fill='%230a0a0a'%3E🍽️%3C/text%3E%3C/svg%3E">
 <style>
 :root {
-  --bg: #0a0a0a;
-  --bg-card: #141414;
-  --bg-hover: #1c1c1c;
-  --gold: #C9A962;
-  --gold-light: #e0c880;
-  --gold-dark: #a08840;
-  --text: #f0f0f0;
-  --text-muted: #888;
-  --text-dim: #555;
-  --border: #2a2a2a;
-  --ok: #4CAF50;
-  --no: #F44336;
-  --na: #9E9E9E;
-  --shadow: 0 4px 20px rgba(0,0,0,0.5);
-  --radius: 14px;
-  --radius-sm: 8px;
+  --bg: #0a0a0a; --bg-card: #141414; --bg-hover: #1c1c1c;
+  --gold: #C9A962; --gold-light: #e0c880; --gold-dark: #a08840;
+  --text: #f0f0f0; --text-muted: #888; --text-dim: #555;
+  --border: #2a2a2a; --ok: #4CAF50; --no: #F44336; --na: #9E9E9E;
+  --shadow: 0 4px 20px rgba(0,0,0,0.5); --radius: 14px; --radius-sm: 8px;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body { height: 100%; background: var(--bg); color: var(--text); font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; overflow-x: hidden; }
@@ -35,8 +24,8 @@ body { -webkit-font-smoothing: antialiased; }
 /* LOGIN */
 #loginScreen { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 24px; background: radial-gradient(ellipse at top, #1a1a1a 0%, var(--bg) 70%); }
 .login-logo { font-size: 56px; margin-bottom: 12px; }
-.login-title { font-size: 28px; font-weight: 700; letter-spacing: 1px; color: var(--gold); margin-bottom: 4px; text-align: center; }
-.login-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 32px; text-align: center; }
+.login-title { font-size: 26px; font-weight: 700; letter-spacing: 1px; color: var(--gold); margin-bottom: 4px; text-align: center; }
+.login-sub { font-size: 13px; color: var(--text-muted); margin-bottom: 32px; text-align: center; max-width: 400px; line-height: 1.4; }
 .manager-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 14px; width: 100%; max-width: 600px; }
 .manager-btn { display: flex; align-items: center; gap: 14px; padding: 18px 20px; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius); cursor: pointer; transition: all 0.2s; color: var(--text); text-align: left; }
 .manager-btn:hover, .manager-btn:active { background: var(--bg-hover); border-color: var(--gold-dark); transform: translateY(-1px); }
@@ -73,13 +62,6 @@ body { -webkit-font-smoothing: antialiased; }
 .stat-card svg.progress-ring .bg { stroke: #2a2a2a; }
 .stat-card svg.progress-ring .fg { stroke: var(--gold); stroke-linecap: round; transform: rotate(-90deg); transform-origin: 50% 50%; transition: stroke-dashoffset 0.6s ease; }
 
-/* FILTERS */
-.filter-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 18px; scrollbar-width: none; }
-.filter-tabs::-webkit-scrollbar { display: none; }
-.filter-tab { flex-shrink: 0; padding: 8px 16px; background: var(--bg-card); border: 1px solid var(--border); border-radius: 50px; font-size: 12px; font-weight: 600; color: var(--text-muted); cursor: pointer; transition: 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
-.filter-tab.active { background: var(--gold); color: #0a0a0a; border-color: var(--gold); }
-.filter-tab:hover:not(.active) { border-color: var(--gold-dark); color: var(--text); }
-
 /* SECTION GRID */
 .section-grid { display: grid; grid-template-columns: 1fr; gap: 12px; }
 @media(min-width: 640px) { .section-grid { grid-template-columns: repeat(2, 1fr); } }
@@ -92,11 +74,7 @@ body { -webkit-font-smoothing: antialiased; }
 .sec-count { font-size: 11px; color: var(--text-dim); background: var(--bg); padding: 3px 8px; border-radius: 50px; }
 .sec-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
 .badge { font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-.badge-fb { background: rgba(76,175,80,0.15); color: #4CAF50; }
-.badge-foh { background: rgba(33,150,243,0.15); color: #2196F3; }
-.badge-hk { background: rgba(255,152,0,0.15); color: #FF9800; }
-.badge-product { background: rgba(156,39,176,0.15); color: #9C27B0; }
-.badge-other { background: rgba(158,158,158,0.15); color: #9E9E9E; }
+.badge-fb { background: rgba(201,169,98,0.15); color: var(--gold); }
 .progress-bar { height: 6px; background: #2a2a2a; border-radius: 3px; overflow: hidden; margin-bottom: 10px; }
 .progress-bar .fill { height: 100%; background: linear-gradient(90deg, var(--gold-dark), var(--gold)); border-radius: 3px; transition: width 0.5s ease; }
 .sec-footer { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted); }
@@ -130,11 +108,11 @@ body { -webkit-font-smoothing: antialiased; }
 .std-class { font-size: 9px; font-weight: 700; padding: 3px 6px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.5px; flex-shrink: 0; margin-top: 2px; }
 .class-prod { background: rgba(156,39,176,0.15); color: #BA68C8; }
 .class-serv { background: rgba(33,150,243,0.15); color: #64B5F6; }
-.class-ei { background: rgba(255,152,0,0.15); color: #FFB74D; }
 .class-eff { background: rgba(0,150,136,0.15); color: #4DB6AC; }
-.class-clean { background: rgba(244,67,54,0.15); color: #E57373; }
+.class-food { background: rgba(255,152,0,0.15); color: #FFB74D; }
 .class-sust { background: rgba(76,175,80,0.15); color: #81C784; }
 .class-sales { background: rgba(233,30,99,0.15); color: #F06292; }
+.class-ei { background: rgba(255,193,7,0.15); color: #FFD54F; }
 
 .std-actions { display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
 .std-actions button { flex: 1; min-width: 100px; padding: 10px; border: 1px solid var(--border); background: var(--bg); color: var(--text-muted); border-radius: var(--radius-sm); font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 4px; }
@@ -162,14 +140,9 @@ body { -webkit-font-smoothing: antialiased; }
 #toast.success { border-color: var(--ok); color: var(--ok); }
 #toast.error { border-color: var(--no); color: var(--no); }
 
-/* SPINNER */
 @keyframes spin { to { transform: rotate(360deg); } }
 .spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(201,169,98,0.3); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; }
-
-/* HIDDEN */
 .hidden { display: none !important; }
-
-/* SCROLLBAR */
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--bg); }
 ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
@@ -178,20 +151,18 @@ body { -webkit-font-smoothing: antialiased; }
 </head>
 <body>
 
-<!-- LOGIN -->
 <div id="loginScreen">
-  <div class="login-logo">⭐</div>
-  <div class="login-title">LQA TRACKER</div>
-  <div class="login-sub">Kimpton Los Monteros · Seguimiento de Estándares</div>
+  <div class="login-logo">🍽️</div>
+  <div class="login-title">LQA TRACKER F&B</div>
+  <div class="login-sub">Kimpton Los Monteros Marbella<br>Seguimiento de Estándares Food & Beverage</div>
   <div class="manager-grid" id="managerGrid"></div>
 </div>
 
-<!-- APP -->
 <div id="appContainer">
   <div class="app-header">
     <div class="brand">
-      <div class="brand-icon">⭐</div>
-      <div class="brand-text">LQA TRACKER</div>
+      <div class="brand-icon">🍽️</div>
+      <div class="brand-text">LQA F&B</div>
     </div>
     <div class="user">
       <span class="user-name" id="managerName">—</span>
@@ -199,21 +170,11 @@ body { -webkit-font-smoothing: antialiased; }
     </div>
   </div>
 
-  <!-- DASHBOARD -->
   <div id="dashboardView">
     <div class="stats-row" id="statsRow"></div>
-    <div class="filter-tabs" id="filterTabs">
-      <div class="filter-tab active" onclick="filterSections('all')">Todas</div>
-      <div class="filter-tab" onclick="filterSections('fb')">F&B</div>
-      <div class="filter-tab" onclick="filterSections('foh')">FOH</div>
-      <div class="filter-tab" onclick="filterSections('hk')">HK</div>
-      <div class="filter-tab" onclick="filterSections('product')">Producto</div>
-      <div class="filter-tab" onclick="filterSections('other')">Otras</div>
-    </div>
     <div class="section-grid" id="sectionGrid"></div>
   </div>
 
-  <!-- DETAIL -->
   <div id="detailView">
     <div class="detail-header">
       <button class="back-btn" onclick="showDashboard()">←</button>
@@ -228,16 +189,13 @@ body { -webkit-font-smoothing: antialiased; }
   </div>
 </div>
 
-<!-- INSTALL BUTTON -->
 <button id="installBtn" class="hidden" onclick="installApp()">📲 Instalar App</button>
 
-<!-- SAVE BAR -->
 <div id="saveBar" class="hidden">
   <div class="save-info">Último guardado: <span id="lastManager">—</span> · <span id="lastTime">—</span></div>
   <button id="saveBtn" onclick="saveChanges()"><span id="saveText">💾 Guardar cambios</span></button>
 </div>
 
-<!-- TOAST -->
 <div id="toast"><span id="toastMsg"></span></div>
 
 <script src="app.js"></script>
