@@ -1,4 +1,3 @@
-
 // ============================================================
 // LQA TRACKER — Kimpton Los Monteros · Versión 2
 // Fondo claro · 100% Español · Sincronización con Google Sheets
@@ -34,7 +33,7 @@ const BADGE_CLASS = {
 
 const STORAGE_KEY = 'lqa_glass_state_v3';
 const USERS_KEY = 'lqa_glass_users';
-const SHEET_URL_KEY = 'lqa_sheet_url';
+const SHEET_URL_KEY = 'lqa_sheet_url_v2';
 
 let state = {
   user: null,
@@ -46,15 +45,34 @@ let state = {
   syncing: false
 };
 
-const DEFAULT_SHEET_URL = 'https://script.google.com/macros/s/AKfycbw_6rU60UQQsQzjxDnVOVifZxMbVdHMMtzinVsVcQXzHhPHc2PNOm2Cwu63eTMHJOrvFg/exec';
+// Clave del sistema anti-borrado: hasta que no hemos recibido datos del
+// servidor por primera vez, NO se envía nada (así un dispositivo con datos
+// antiguos nunca pisa los datos nuevos del servidor).
+let hasSynced = false;
+
+const DEFAULT_SHEET_URL = 'https://script.google.com/macros/s/AKfycbzNU7sgE5fAXTJsFvMPhzF7z7hN_ls1XLP5_XszpD5st6Jm1Yvq0HK9ZkmmAZ1ztLmVmg/exec';
 let sheetUrl = localStorage.getItem(SHEET_URL_KEY) || DEFAULT_SHEET_URL;
 
 // ============================================================
 // SINCRONIZACIÓN CON GOOGLE SHEETS
 // ============================================================
+function updateSyncInfo(){
+  var el = document.getElementById('syncInfo');
+  if(!el) return;
+  if(!lastSyncInfo.time){
+    el.innerHTML = '⏳ Aún no se ha completado ninguna sincronización.';
+    return;
+  }
+  var h = lastSyncInfo.time.toLocaleTimeString();
+  el.innerHTML = '\u{1F552} Última sincronización: <b>' + h + '</b><br>' +
+    '\u{1F464} Usuarios en la nube: <b>' + lastSyncInfo.users + '</b><br>' +
+    '✅ Estándares evaluados en la nube: <b>' + lastSyncInfo.evals + '</b>';
+}
+
 function openSyncModal(){
   document.getElementById('sheetUrlInput').value = sheetUrl;
   document.getElementById('syncStatus').textContent = sheetUrl ? '✅ Conectado' : 'Sin conectar';
+  updateSyncInfo();
   document.getElementById('syncModal').classList.add('show');
 }
 function closeSyncModal(){ document.getElementById('syncModal').classList.remove('show'); }
@@ -74,6 +92,7 @@ function saveSheetUrl(){
 }
 
 let syncRetryTimer = null;
+let lastSyncInfo = {time: null, users: 0, evals: 0};
 
 function setSyncStatus(st){
   const dot = document.getElementById('syncDot');
@@ -89,6 +108,46 @@ function scheduleSyncRetry(){
   syncRetryTimer = setTimeout(function(){ loadFromSheet(true); }, 20000);
 }
 
+// ===== FUSIÓN ANTI-BORRADO =====
+// Cada estándar y cada usuario lleva un timestamp (ts). Al recibir datos
+// del servidor se fusiona elemento a elemento: SIEMPRE gana el más reciente.
+// Los usuarios nunca se borran: se unen ambas listas por nombre.
+function mergeRemote(data){
+  if(!data) return;
+  const srv = data.progress || {};
+  for(const sid in srv){
+    if(!state.data[sid]) state.data[sid] = [];
+    const local = state.data[sid];
+    srv[sid].forEach(it=>{
+      const idx = local.findIndex(x=>x.n===it.n);
+      const ts = Number(it.ts)||0;
+      if(idx === -1){
+        local.push({n: it.n, s: it.s || null, note: it.note || '', ts: ts});
+      } else if(ts >= (Number(local[idx].ts)||0)){
+        local[idx].s = it.s || null;
+        local[idx].note = it.note || '';
+        local[idx].ts = ts;
+      }
+    });
+    local.sort((a,b)=>a.n-b.n);
+  }
+  // Usuarios: unión por nombre, prevalece el registro más reciente
+  const srvUsers = data.users || [];
+  let localUsers = getUsers();
+  srvUsers.forEach(su=>{
+    const i = localUsers.findIndex(u=>u.name===su.name);
+    const ts = Number(su.ts)||0;
+    if(i === -1){
+      localUsers.push({name: su.name, pos: su.pos||'', av: su.av||'👤', ts: ts});
+    } else if(ts > (Number(localUsers[i].ts)||0)){
+      localUsers[i].pos = su.pos || localUsers[i].pos;
+      localUsers[i].av = su.av || localUsers[i].av;
+      localUsers[i].ts = ts;
+    }
+  });
+  saveUsers(localUsers);
+}
+
 // Carga con JSONP (para evitar problemas de CORS al LEER)
 function loadFromSheet(silent){
   if(!sheetUrl){ setSyncStatus('local'); if(!silent) showToast('No hay URL de Apps Script configurada', 'err'); return; }
@@ -97,9 +156,10 @@ function loadFromSheet(silent){
     delete window.__lqaLoadCb;
     flushPendingSave();
     if(data){
-      if(data.progress) state.data = data.progress;
-      if(data.users && data.users.length) saveUsers(data.users);
+      mergeRemote(data);
+      hasSynced = true;
       saveState(false);
+      syncToSheet(); // envía lo que este dispositivo tenga más reciente
       if(state.user){
         if(state.currentSection) renderSectionDetail();
         else if(state.currentDept) showDeptDashboard(state.currentDept);
@@ -108,8 +168,15 @@ function loadFromSheet(silent){
       renderLogin();
       setSyncStatus('ok');
       clearTimeout(syncRetryTimer);
+      var cu = (data.users || []).length;
+      var ce = 0;
+      for(var _sid in (data.progress || {})){
+        (data.progress[_sid] || []).forEach(function(x){ if(x && x.s) ce++; });
+      }
+      lastSyncInfo = {time: new Date(), users: cu, evals: ce};
+      updateSyncInfo();
       document.getElementById('syncStatus').textContent = '✅ Sincronizado correctamente';
-      if(!silent) showToast('✅ Datos sincronizados con Google Sheets', 'ok');
+      if(!silent) showToast('☁️ Nube: ' + cu + ' usuarios · ' + ce + ' estándares evaluados', 'ok');
     } else {
       document.getElementById('syncStatus').textContent = '⚠️ No se pudieron leer datos (hojas vacías)';
     }
@@ -128,20 +195,26 @@ function loadFromSheet(silent){
 }
 
 // Envío con POST no-cors (funciona sin configuración extra en Apps Script)
+// Envío con sendBeacon: a diferencia de fetch, conserva el cuerpo del POST
+// al seguir la redirección 302 de Apps Script (fallo típico que hacía que
+// NADA se guardara en la hoja). fetch queda como respaldo.
 function syncToSheet(){
   if(!sheetUrl) return;
+  var payload = JSON.stringify({
+    action: 'save',
+    user: state.user ? state.user.name : '',
+    users: getUsers(),
+    progress: state.data
+  });
   try{
-    fetch(sheetUrl, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: {'Content-Type': 'text/plain;charset=utf-8'},
-      body: JSON.stringify({
-        action: 'save',
-        user: state.user ? state.user.name : '',
-        users: getUsers(),
-        progress: state.data
-      })
-    });
+    if(navigator.sendBeacon){
+      var blob = new Blob([payload], {type: 'text/plain;charset=utf-8'});
+      if(navigator.sendBeacon(sheetUrl, blob)) return;
+    }
+  }catch(e){}
+  try{
+    fetch(sheetUrl, {method:'POST', mode:'no-cors', redirect:'follow',
+      headers:{'Content-Type':'text/plain;charset=utf-8'}, body: payload}).catch(function(){});
   }catch(e){}
 }
 
@@ -191,7 +264,7 @@ function saveState(sync){
     user: state.user,
     data: state.data
   }));
-  if(sync !== false) syncToSheet();
+  if(sync !== false && hasSynced) syncToSheet();
 }
 
 function getUsers(){
@@ -208,7 +281,7 @@ function saveUsers(list){
 
 function getSectionData(sid){
   if(!state.data[sid]){
-    state.data[sid] = SECTIONS.find(s=>s.id===sid).std.map(st=>({n:st.n, s:null, note:''}));
+    state.data[sid] = SECTIONS.find(s=>s.id===sid).std.map(st=>({n:st.n, s:null, note:'', ts:0}));
   }
   return state.data[sid];
 }
@@ -266,7 +339,7 @@ function createUser(){
   if(!pos){ showToast('Introduce tu posición', 'err'); return; }
   const users = getUsers();
   if(users.find(u=>u.name===name)){ showToast('Este usuario ya existe', 'err'); return; }
-  users.push({name, pos, av: '👤'});
+  users.push({name, pos, av: '👤', ts: Date.now()});
   saveUsers(users);
   document.getElementById('newUserName').value = '';
   document.getElementById('newUserPos').value = '';
@@ -278,7 +351,9 @@ function createUser(){
 function login(name, pos){
   state.user = {name, pos};
   saveState();
-  document.getElementById('headerUserName').textContent = name;
+  var hn = document.getElementById('headerUserName');
+  hn.textContent = name;
+  hn.title = name + ' · ' + pos;
   document.getElementById('loginScreen').classList.add('hidden');
   document.getElementById('appContainer').style.display = 'block';
   showGlobalDashboard();
@@ -445,6 +520,7 @@ function setStatus(sid, n, status){
   const item = d.find(x=>x.n===n);
   if(item){
     item.s = item.s===status ? null : status;
+    item.ts = Date.now();
     triggerAutoSave();
     renderSectionDetail();
     const pct = calcProgress(sid);
@@ -456,7 +532,7 @@ function setStatus(sid, n, status){
 function setNote(sid, n, note){
   const d = getSectionData(sid);
   const item = d.find(x=>x.n===n);
-  if(item){ item.note = note; triggerAutoSave(); }
+  if(item){ item.note = note; item.ts = Date.now(); triggerAutoSave(); }
 }
 
 function triggerAutoSave(){
