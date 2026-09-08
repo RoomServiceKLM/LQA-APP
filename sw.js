@@ -1,5 +1,5 @@
 const CACHE_NAME = 'lqa-glass-v2';
-const urlsToCache = ['./','./index.html','./app.js','./manifest.json','./logo.svg'];
+const urlsToCache = ['./','./index.html','./app.js','./manifest.json','./logo.svg','./logo192.png','./logo512.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(urlsToCache)));

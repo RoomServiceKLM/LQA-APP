@@ -45,7 +45,8 @@ let state = {
   syncing: false
 };
 
-let sheetUrl = localStorage.getItem(SHEET_URL_KEY) || '';
+const DEFAULT_SHEET_URL = 'https://script.google.com/macros/s/AKfycbw_6rU60UQQsQzjxDnVOVifZxMbVdHMMtzinVsVcQXzHhPHc2PNOm2Cwu63eTMHJOrvFg/exec';
+let sheetUrl = localStorage.getItem(SHEET_URL_KEY) || DEFAULT_SHEET_URL;
 
 // ============================================================
 // SINCRONIZACIÓN CON GOOGLE SHEETS
@@ -76,6 +77,7 @@ function loadFromSheet(silent){
   if(!sheetUrl){ if(!silent) showToast('Introduce primero la URL de Apps Script', 'err'); return; }
   window.__lqaLoadCb = function(data){
     delete window.__lqaLoadCb;
+    flushPendingSave();
     if(data){
       if(data.progress) state.data = data.progress;
       if(data.users && data.users.length) saveUsers(data.users);
@@ -122,8 +124,8 @@ function syncToSheet(){
 }
 
 function syncNow(){
-  if(!sheetUrl){ openSyncModal(); return; }
   showToast('☁️ Sincronizando...', '');
+  flushPendingSave();
   syncToSheet();
   setTimeout(function(){ loadFromSheet(false); }, 1500);
 }
@@ -134,7 +136,20 @@ function syncNow(){
 function init(){
   loadState();
   renderLogin();
-  if(sheetUrl){ loadFromSheet(true); }
+  // Sincronización automática: al cargar, al volver a la pestaña y cada 45 segundos
+  loadFromSheet(true);
+  window.addEventListener('focus', function(){ loadFromSheet(true); });
+  setInterval(function(){ if(state.user || getUsers().length) loadFromSheet(true); }, 45000);
+}
+
+// Vacía cualquier guardado pendiente antes de traer datos del servidor
+function flushPendingSave(){
+  if(state.saveTimer){
+    clearTimeout(state.saveTimer);
+    state.saveTimer = null;
+    saveState();
+    document.getElementById('autoSaveIndicator').classList.remove('show');
+  }
 }
 
 function loadState(){
